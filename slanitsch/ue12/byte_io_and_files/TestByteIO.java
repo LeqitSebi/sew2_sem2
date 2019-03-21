@@ -4,21 +4,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 
 public class TestByteIO {
 
     public static void main(String[] args) throws IOException {
-//        copyFile("resources/gnu_pingu.jpg", "resources/mein_bild.jpg");
-//        invertFile("resources/Was_stellt_das_verschluesselte_Bild_dar.gif", "resources/mein_bild_test.jpg");
-//        encryptFile("resources/mein_bild.jpg", "resources/mein_bild_test.jpg", 12);
+//        copyFile(Paths.get("resources/gnu_pingu.jpg"), Paths.get("resources/mein_bild.jpg"));
+//        invertFile(Paths.get("resources/Was_stellt_das_verschluesselte_Bild_dar.gif"), Paths.get("resources/mein_bild_test.jpg"));
+        encryptFile(Paths.get("resources/gnu_pingu.jpg"), Paths.get("resources/mein_bild.jpg"), 12);
+        decryptFile(Paths.get("resources/mein_bild.jpg"), Paths.get("resources/mein_bild_test.jpg"), 12);
     }
 
-    public static void copyFile(String srcFile, String destFile) throws IOException {
+    public static void copyFile(Path srcFile, Path destFile) throws IOException {
         try (
-                InputStream in = Files.newInputStream(Paths.get(srcFile));
-                OutputStream out = Files.newOutputStream(Paths.get(destFile));
+                InputStream in = Files.newInputStream(srcFile);
+                OutputStream out = Files.newOutputStream(destFile);
         ) {
             byte[] buffer = new byte[2048];
             int bytesRead;
@@ -28,10 +30,10 @@ public class TestByteIO {
         }
     }
 
-    public static void invertFile(String srcFile, String destFile) throws IOException {
+    public static void invertFile(Path srcFile, Path destFile) throws IOException {
         try (
-                InputStream in = Files.newInputStream(Paths.get(srcFile));
-                OutputStream out = Files.newOutputStream(Paths.get(destFile));
+                InputStream in = Files.newInputStream(srcFile);
+                OutputStream out = Files.newOutputStream(destFile);
         ) {
             byte[] buffer = new byte[2048];
             int bytesRead;
@@ -44,10 +46,10 @@ public class TestByteIO {
         }
     }
 
-    public static void encryptFile(String srcFile, String destFile, int key) throws IOException {
+    public static void encryptFile(Path srcFile, Path destFile, int key) throws IOException {
         try (
-                InputStream in = Files.newInputStream(Paths.get(srcFile));
-                OutputStream out = Files.newOutputStream(Paths.get(destFile));
+                InputStream in = Files.newInputStream(srcFile);
+                OutputStream out = Files.newOutputStream(destFile);
         ) {
             Random rnd = new Random(key);
             byte[] rndBytes = new byte[2048];
@@ -63,7 +65,7 @@ public class TestByteIO {
         }
     }
 
-    public static void decryptFile(String srcFile, String destFile, int key) throws IOException {
+    public static void decryptFile(Path srcFile, Path destFile, int key) throws IOException {
         encryptFile(srcFile, destFile, key);
     }
 }
