@@ -80,7 +80,7 @@ public class TestByteIO {
         double filecount = Math.ceil(helper);
         int i = 0;
         while ((bytesRead = in.read(buffer, 0, buffer.length)) > 0) {
-            OutputStream out = Files.newOutputStream(Paths.get("resources/splitFile0000000" + i + ".jpg"));
+            OutputStream out = Files.newOutputStream(Paths.get(file.toString() + "0000000" + i));
             out.write(buffer, 0, bytesRead);
             i++;
         }
@@ -91,8 +91,8 @@ public class TestByteIO {
         byte[] buffer = new byte[2048];
         int bytesRead;
         for (int i = 0; true; i++) {
-            if (Files.exists(Paths.get("resources/splitFile0000000" + i + ".jpg"))) {
-                InputStream in = Files.newInputStream(Paths.get("resources/splitFile0000000" + i + ".jpg"));
+            if (Files.exists(Paths.get(file.toString() + "0000000" + i))) {
+                InputStream in = Files.newInputStream(Paths.get(file.toString() + "0000000" + i));
                 while ((bytesRead = in.read(buffer, 0, buffer.length)) > 0) {
                     out.write(buffer, 0, bytesRead);
                 }
