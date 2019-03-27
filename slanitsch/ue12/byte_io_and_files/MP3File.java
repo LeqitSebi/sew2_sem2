@@ -24,17 +24,39 @@ public class MP3File {
         fillClass(file);
     }
 
-    public static byte[] copyArrays(byte[] input, int length) {
+    public static byte[] copyArrays(byte[] input, int length, int start) {
         byte[] output = new byte[length];
         for (int i = 0; i < length; i++) {
-            output[i]=output[i];
+            output[i] = input[i + start];
         }
         return output;
     }
 
+    public static String trim(String input) {
+        String output = "";
+        String chars = "abcdefghijklmnopqrstuvwxyz1234567890ßäöü,.!?;QWERTZUIOPÜASDFGHJKLÖÄYXCVBNM#+";
+        for (int i = 0; i < input.length(); i++) {
+            char test = input.charAt(i);
+            if (contains(test, chars)) {
+                output += test;
+            }
+
+        }
+        return output;
+    }
+
+    public static boolean contains(char input, String all) {
+        for (int i = 0; i < all.length(); i++) {
+            if (all.charAt(i) == input) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
-        return (Titel + Album + Interpret + Jahr + Kommentar + Genre);
+        return ("Titel: " + trim(Titel) + " Album: " + trim(Album) + " Interpret: " + trim(Interpret) + " Jahr: " + trim(Jahr) + " Kommentar: " + trim(Kommentar) + " Genre: " + trim(Genre));
     }
 
     public void fillClass(Path file) throws IOException {
@@ -45,12 +67,12 @@ public class MP3File {
             int bytesRead;
             in.skip(Files.size(file) - 125);
             bytesRead = in.read(buffer, 0, buffer.length);
-            byte[] title = copyArrays(buffer, 30);
-            byte[] artist = copyArrays(buffer, 30);
-            byte[] album = copyArrays(buffer, 30);
-            byte[] year = copyArrays(buffer, 4);
-            byte[] comment = copyArrays(buffer, 30);
-            byte[] genre = copyArrays(buffer, 1);
+            byte[] title = copyArrays(buffer, 30, 0);
+            byte[] artist = copyArrays(buffer, 30, 30);
+            byte[] album = copyArrays(buffer, 30, 60);
+            byte[] year = copyArrays(buffer, 4, 90);
+            byte[] comment = copyArrays(buffer, 30, 94);
+            byte[] genre = copyArrays(buffer, 1, 124);
             Titel = new String(title);
             Interpret = new String(artist);
             Album = new String(album);

@@ -15,8 +15,8 @@ public class TestByteIO {
 //        invertFile(Paths.get("resources/Was_stellt_das_verschluesselte_Bild_dar.gif"), Paths.get("resources/mein_bild_test.jpg"));
 //        encryptFile(Paths.get("resources/gnu_pingu.jpg"), Paths.get("resources/mein_bild.jpg"), 12);
 //        decryptFile(Paths.get("resources/mein_bild.jpg"), Paths.get("resources/mein_bild_test.jpg"), 12);
-//        FileSplit(Paths.get("resources/gnu_pingu.jpg"), 15000);
-        FileUnsplit(Paths.get("resources/gnu_pingu.jpg"));
+        FileSplit(Paths.get("resources/gnu_pingu.jpg"), 15000);
+//        FileUnsplit(Paths.get("resources/gnu_pingu.jpg"));
 
     }
 
@@ -72,6 +72,15 @@ public class TestByteIO {
         encryptFile(srcFile, destFile, key);
     }
 
+
+    public static void encryptFile(Path srcFile, Path destFile, String key) throws IOException {
+        int keyint = Integer.parseInt(key);
+        encryptFile(srcFile, destFile, keyint);
+    }
+
+    public static void decryptFile(Path srcFile, Path destFile, String key) throws IOException {
+        decryptFile(srcFile, destFile, key);
+    }
     public static void FileSplit(Path file, long maxBytes) throws IOException {
         InputStream in = Files.newInputStream(file);
         float helper = (float) Files.size(file) / maxBytes;
