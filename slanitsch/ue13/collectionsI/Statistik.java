@@ -1,4 +1,4 @@
-package slanitsch.ue13.collections;
+package slanitsch.ue13.collectionsI;
 
 import java.io.BufferedReader;
 import java.io.IOException;

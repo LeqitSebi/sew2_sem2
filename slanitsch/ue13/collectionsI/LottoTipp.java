@@ -1,6 +1,5 @@
-package slanitsch.ue13.collections;
+package slanitsch.ue13.collectionsI;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -87,16 +86,21 @@ public class LottoTipp {
         LottoTipp rightTipp = new LottoTipp();
         int right_guesses;
         int[] output = new int[7];
-        long endTime = System.currentTimeMillis() + (seconds*1000);
-        while (System.currentTimeMillis() <= endTime){
-                LottoTipp guess = new LottoTipp();
-                right_guesses = guess.countEqualNumbers(rightTipp);
+        long endTime = System.currentTimeMillis() + (seconds * 1000);
+        while (System.currentTimeMillis() <= endTime) {
+            LottoTipp guess = new LottoTipp();
+            right_guesses = guess.countEqualNumbers(rightTipp);
+            try {
                 output[right_guesses]++;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
         }
         return output;
     }
 
-    public static void printCalcGewinne(int[]gewinne){
+    public static void printCalcGewinne(int[] gewinne) {
+        int tippsum = gewinne[0] + gewinne[1] + gewinne[2] + gewinne[3] + gewinne[4] + gewinne[5] + gewinne[6];
         System.out.println("Ein 0er, 1er, etc. kam insgesamt vor:");
         System.out.println("0er: " + gewinne[0]);
         System.out.println("1er: " + gewinne[1]);
@@ -105,5 +109,14 @@ public class LottoTipp {
         System.out.println("4er: " + gewinne[4]);
         System.out.println("5er: " + gewinne[5]);
         System.out.println("6er: " + gewinne[6]);
+        System.out.println("D.h. insgesamt ist 1 Tipp von .. Tipps notwendig, um einen 1er, 2er, ... zu erreichen:");
+        System.out.println("0er: 1:" + tippsum/gewinne[0]);
+        System.out.println("1er: 1:" + tippsum/gewinne[1]);
+        System.out.println("2er: 1:" + tippsum/gewinne[2]);
+        System.out.println("3er: 1:" + tippsum/gewinne[3]);
+        System.out.println("4er: 1:" + tippsum/gewinne[4]);
+        System.out.println("5er: 1:" + tippsum/gewinne[5]);
+        System.out.println("6er: 1:" + tippsum/gewinne[6]);
+
     }
 }
