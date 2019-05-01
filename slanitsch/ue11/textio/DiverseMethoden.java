@@ -25,7 +25,7 @@ public class DiverseMethoden {
 
     public static void convertFileToUpperCase(String srcFile, String destFile) throws IOException {
         try (
-                BufferedReader in = Files.newBufferedReader(Paths.get(srcFile), Charset.forName("UTF-8"));
+                    BufferedReader in = Files.newBufferedReader(Paths.get(srcFile), Charset.forName("UTF-8"));
                 BufferedWriter out = Files.newBufferedWriter(Paths.get(destFile), Charset.forName("UTF-8"));
         ) {
             String line;

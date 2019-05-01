@@ -1,214 +1,89 @@
 package slanitsch.ue13.collectionsII;
 
-/**
- * Diese Klasse dient dazu, Subnetze anlegen zu können (IP Adressen mit Subnetzen)
- */
+import slanitsch.ue13.collectionsII.IPAddress;
+
 public class Subnet {
-    private IPAddress addr;
-    private IPAddress mask;
 
-    public final IPAddress LOCALHOST = new IPAddress("192.168.10.0");
-    public final IPAddress MODEM = new IPAddress("10.0.0.138");
+	/**
+	 * network address
+	 */
+	private IPAddress net;
+	/**
+	 * network mask
+	 */
+	private IPAddress mask;
 
-    /**
-     * Dieser Konstruktor dient dazu, ein Subnnet mit einem Netzwerk als String anzulegen
-     * @param network als String
-     */
-    public Subnet(String network){
-        setMask(network);
-    }
+	/**
+	 * create netmask from network ip and number of bits
+	 * @param net     network address
+	 * @param cidr    number of bits
+	 */
+	public Subnet(IPAddress net, int cidr) {
+		createMask(net, cidr);
+	}
 
-    /**
-     * Dieser Konstruktor dient dazu, ein Subnet mit einer Ip Adresse als IPAddress und einem Präfix als int anzulegen
-     * @param Ip als IPAddress
-     * @param suffix als int
-     */
-    public Subnet(IPAddress Ip, int suffix){
-        setMask(Ip,suffix);
-    }
+	private void createMask(IPAddress net, int cidr) {
+		this.net = net;
+		this.mask = IPAddress.createNetmask(cidr);
+		// System.out.format("n %08x\n", this.net.getIP() & 0xffffffffl);
+		// System.out.format("m %08x\n", this.mask.getIP());
+		// System.out.format(" %08x\n", (this.net.getIP() & mask.getIP()));
+		
+		if ((this.net.getIP() & mask.getIP()) != this.net.getIP()) {
+			throw new IllegalArgumentException("bad network");
+		}
+	}
 
-    /**
-     * Dieser Konstruktor dient dazu ein Subnet mit einer Ip Adresse als IPAddress und einer Maske als IPAddress anzulegen
-     * @param Ip als IPAddress
-     * @param Mask als IPAddress
-     */
-    public Subnet(IPAddress Ip, IPAddress Mask){
-        setMask(Ip,Mask);
-    }
+	/**
+	 * create netmask from ip (four number) and number of bits
+	 * @param a3
+	 * @param a2
+	 * @param a1
+	 * @param a0
+	 * @param cidr
+	 */
+	public Subnet(int a3, int a2, int a1, int a0, int cidr) {
+		this(new IPAddress(a3, a2, a1, a0), cidr);
+	}
+	
+	public Subnet(String mask) {
+		String[] parts = mask.split("/");
+		if (parts.length != 2) {
+			throw new IllegalArgumentException("ill formed subnet");
+		}
+		IPAddress ip = new IPAddress(parts[0]);
+		int cidr = Integer.parseInt(parts[1]);
+		createMask(ip, cidr);
+	}
 
-    /**
-     * Dieser Konstrukter dient dazu ein Subnet mit einer Ip Adresse als String und einer Maske als als String anzulegen
-     * @param Ip als String
-     * @param Mask als String
-     */
-    public Subnet(String Ip, String Mask){
-        setMask(Ip,Mask);
-    }
+	public IPAddress getNet() {
+		return net;
+	}
 
-    /**
-     * Dieser Setter dient dazu das Programm für den String-Konstrukter zu schreiben und ihn im Konstruktor einzusetzen
-     * @param network
-     */
-    public void setMask(String network) {
-        String[] split = network.split("/");
+	public IPAddress getMask() {
+		return mask;
+	}
 
-        this.addr = new IPAddress(split[0]);
+	public IPAddress getBroadcast() {
+		return new IPAddress( net.getIP() + ~mask.getIP() );
+	}
 
-        if (split[1].length() > 2) {
-            this.mask = new IPAddress(split[1]);
-        } else {
+	/**
+	 * is IP in this network
+	 * @param ip 
+	 * @return
+	 */
+	public boolean contains(IPAddress ip) {
+		// System.out.format("i %08x\n", ip.getIP());
+		// System.out.format("m %08x\n", mask.getIP());
+		// System.out.format("i&m %08x\n", ip.getIP() & mask.getIP());
+		// System.out.format("n %08x\n", net.getIP());
 
-            this.mask = new IPAddress(getNetmask(split[1]));
-        }
-    }
+		return (ip.getIP() & mask.getIP()) == net.getIP();
+	}
 
-    /**
-     * Dieser Setter dient dazu das Programm für den IP&int-Konstruktor zu schreiben und ihn im Konstruktor einzusetzen
-     * @param Ip als IPAddress
-     * @param suffix als int
-     */
-    public void setMask(IPAddress Ip, int suffix) {
-        this.addr = Ip;
-        this.mask = new IPAddress(suffix);
-    }
-
-    /**
-     * Dieser Setter dient dazu das Programm für den IP&IP-Konstruktor zu schreiben und ihn im Konstruktor einzusetzen
-     * @param Ip als IPAddress
-     * @param Mask als IPAddress
-     */
-    public void setMask(IPAddress Ip, IPAddress Mask) {
-        this.addr = Ip;
-        this.mask = Mask;
-    }
-
-    /**
-     * Dieser Setter dient dazu das Programm für den String&String-Konstruktor zu schreiben und ihn im Konstruktor einzusetzen
-     * @param Ip als String
-     * @param Mask als String
-     */
-    public void setMask(String Ip, String Mask) {
-        this.addr = new IPAddress(Ip);
-
-        if (Mask.length() > 2) {
-            this.mask = new IPAddress(Mask);
-        } else {
-
-            this.mask = new IPAddress(getNetmask(Mask));
-        }
-    }
-
-    /**
-     * Diese Methode liefert die vollständige Netzmaske vom eingegebenen Präfix zurück
-     * @param Mask als String
-     * @return Netzmaske als int
-     */
-    public int getNetmask(String Mask){
-        int suffix = Integer.parseInt(Mask);
-
-        for (int i = 0; i < 32; i++) {
-            suffix = suffix << 1;
-
-            if (i < Integer.parseInt(Mask)){
-                suffix = suffix | 1;
-            }
-        }
-        return suffix;
-    }
-
-    /**
-     * Diese Methode liefert die Netzmaske eines Subnets zurück
-     * @return mask
-     */
-    public IPAddress getNetmask(){
-        return mask;
-    }
-
-    /**
-     * Diese Methode liefert die vollständige Netzmaske vom eingegebenen Netzwerk zurück
-     * @param network als String
-     * @return Netzmaske als int
-     */
-    public int getNetmaskFromNetwork(String network) {
-        int präfix = getSuffixFromNetwork(network);
-
-        for (int i = 0; i < 32; i++) {
-            präfix = präfix << 1;
-
-            if (i < getSuffixFromNetwork(network)) {
-                präfix = präfix | 1;
-            }
-        }
-        return präfix;
-    }
-
-    /**
-     * Diese Methode liefert den Präfix vom eingegebenen Netzwerk zurück
-     * @param network als String
-     * @return präfix als int
-     */
-    public static int getSuffixFromNetwork(String network) {
-        String[] split = network.split("/");
-        int suffix = Integer.parseInt(split[1]);
-
-        return suffix;
-    }
-
-    /**
-     * Liefert den Präfix eines Subnets zurück
-     * @return Präfix als int
-     */
-    public int getSuffix(){
-        return Integer.bitCount(mask.getAsInt());
-    }
-
-    /**
-     * Liefert die Netzadresse eines Subnets zurück
-     * @return Netzadresse als IPAddress
-     */
-    public IPAddress getNetAddress(){
-        return new IPAddress(addr.getAsInt() & mask.getAsInt());
-    }
-
-    /**
-     * Diese Methode liefert ein Subnet als String zurück
-     * @return Subnet als String
-     */
-    @Override
-    public String toString(){
-        return addr + "/" + getSuffix();
-    }
-
-    /**
-     * Diese Methode liefert die Anzahl der möglichen Hosts eines Subnets zurück
-     * @return Hostanzahl als int
-     */
-    public int getNumberOfHosts(){
-        return - mask.getAsInt() - 2;
-    }
-
-    /**
-     * Diese Methode liefert die Broadcastadresse eines Subnets zurück
-     * @return Broadcastadresse als IPAddress
-     */
-    public IPAddress getBroadcastAddress(){
-        return new IPAddress(getNetAddress().getAsInt() + getNumberOfHosts() + 1);
-    }
-
-    /**
-     * Diese Methode liefet die erstmögliche Ip Adresse eines Subnets zurück
-     * @return Erste Ip als IPAddress
-     */
-    public IPAddress getFirstIp(){
-        return new IPAddress(getNetAddress().getAsInt() + 1);
-    }
-
-    /**
-     * Diese Methode liefet die letztmögliche Ip Adresse eines Subnets zurück
-     * @return Letzte Ip als IPAddress
-     */
-    public IPAddress getLastIp(){
-        return new IPAddress(getBroadcastAddress().getAsInt() - 1);
-    }
-
+	@Override
+	public String toString() {
+		return "Subnet [net=" + net + ", mask=" + mask + "]";
+	}
 }

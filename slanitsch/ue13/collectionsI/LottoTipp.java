@@ -1,8 +1,6 @@
 package slanitsch.ue13.collectionsI;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class LottoTipp {
 
@@ -11,6 +9,7 @@ public class LottoTipp {
     public static void main(String[] args) {
         LottoTipp a = new LottoTipp();
         LottoTipp b = new LottoTipp();
+
 //        System.out.println(a);
 //        System.out.println(b);
 //        System.out.println("a.countEqualNumbers(b): " + a.countEqualNumbers(b));
@@ -56,6 +55,7 @@ public class LottoTipp {
         return counter;
     }
 
+
     @Override
     public boolean equals(Object obj) {
         while (obj.toString().length() == getZiffern().toString().length()) {
@@ -66,6 +66,8 @@ public class LottoTipp {
         }
         return false;
     }
+
+
 
     public int hashCode(LottoTipp other) {
         return other.hashCode();
