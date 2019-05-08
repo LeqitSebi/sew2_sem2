@@ -8,6 +8,7 @@ import java.util.*;
 public class TestSet {
     /**
      * Hauptmethode zum Aufrufen anderer
+     *
      * @param sIP
      */
     private static void testSet(Set<IPAddress> sIP) {
@@ -22,6 +23,7 @@ public class TestSet {
 
     /**
      * Fügt ein Ganzes Subnet in ein Set hinzu und gibt aus wie lange es dauerte
+     *
      * @param subnet
      * @return
      */
@@ -38,6 +40,7 @@ public class TestSet {
 
     /**
      * Gibt den Gateway eines Subnetzes in einer Map zurück
+     *
      * @param subnet
      * @return
      */
@@ -49,19 +52,24 @@ public class TestSet {
 
     /**
      * Fügt 5 Gateway-Addressen in eine Map hinzu
+     *
      * @param nextHop
      */
     private static void testNextHop(Map<Subnet, IPAddress> nextHop) {
-        nextHop.put(new Subnet(new IPAddress("10.0.0.0"), 8), new IPAddress("10.255.255.254"));
-        nextHop.put(new Subnet(new IPAddress("10.0.0.0"), 16), new IPAddress("10.0.255.254"));
-        nextHop.put(new Subnet(new IPAddress("10.0.0.0"), 24), new IPAddress("10.0.0.254"));
-        nextHop.put(new Subnet(new IPAddress("192.168.0.0"), 16), new IPAddress("192.168.255.254"));
-        nextHop.put(new Subnet(new IPAddress("192.168.0.0"), 24), new IPAddress("192.168.0.254"));
+        nextHop.put(new Subnet("10.0.0.0/8"), new IPAddress("10.0.0.1"));
+        nextHop.put(new Subnet("172.16.0.0/16"), new IPAddress("172.16.0.1"));
+        nextHop.put(new Subnet("192.168.2.0/24"), new IPAddress("192.168.2.1"));
+        nextHop.put(new Subnet("192.168.5.0/24"), new IPAddress("192.168.5.1"));
+        nextHop.put(new Subnet("192.168.100.0/24"), new IPAddress("192.168.100.1"));
+
         System.out.println(nextHop);
+        System.out.println(nextHop.get(new Subnet("10.0.0.0/8")));
+        System.out.println(nextHop.get(new Subnet("1.2.3.4/32")));
     }
 
     /**
      * Hauptmethode zum Aufrufen anderer
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -89,6 +97,9 @@ public class TestSet {
 
         HashMap<Subnet, IPAddress> nextWithHash = new HashMap<>();
         testNextHop(nextWithHash); // In meinem Fall brauchte man nichts extriges
+
+        TreeMap<Subnet, IPAddress> next;
+        next = new TreeMap<>(new MySubnetComparator());
     }
 }
 
@@ -98,6 +109,7 @@ public class TestSet {
 class MySubnetComparator implements Comparator<Subnet> {
     /**
      * Cpmpare-Methode
+     *
      * @param o1
      * @param o2
      * @return
