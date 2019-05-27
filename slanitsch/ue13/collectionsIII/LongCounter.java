@@ -1,5 +1,9 @@
 package slanitsch.ue13.collectionsIII;
 
+
+//@author Sebstian Slanitsch
+
+
 import java.util.*;
 
 public class LongCounter<K> extends HashMap<K, Long> {
