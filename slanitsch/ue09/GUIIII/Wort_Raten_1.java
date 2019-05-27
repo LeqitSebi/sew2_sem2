@@ -36,10 +36,6 @@ public class Wort_Raten_1 extends Application {
         }
     }
 
-    public static void Button() {
-
-    }
-
     public void start(Stage stage) throws IOException {
 
         String Worts = getWord();
